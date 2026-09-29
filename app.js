@@ -50,6 +50,12 @@ function show(id){
   $('btnSheet').classList.toggle('hidden', id!=='pageQuiz');
   $('btnBack').classList.toggle('hidden', isHome || isSys);
   $('btnSys').classList.toggle('hidden', isSys);
+  // 系统选择页时导航显示平台名；进入具体系统时显示系统名
+  if(isSys){
+    $('navTitle').textContent = '业务系统营销培训练习平台';
+    $('navLogo').textContent = '📚';
+    $('navLogo').style.background = 'linear-gradient(135deg,#1e293b,#334155)';
+  }
 }
 
 function goHome(){ stopExamTimer(); state.exam.active=false; renderHome(); show('pageHome'); }
@@ -68,7 +74,7 @@ function renderSystemGrid(){
     card.innerHTML = `
       <div class="sys-head">
         <div class="sys-ic" style="background:${s.color}">${s.icon}</div>
-        <div class="sys-nm">${s.name}<span style="display:block;font-size:12px;font-weight:400;color:var(--gray)">${s.short}</span></div>
+        <div class="sys-nm">${s.name}</div>
       </div>
       <div class="sys-sub">${s.sub||''}</div>
       <div class="sys-stat">
@@ -76,7 +82,7 @@ function renderSystemGrid(){
         <span>已练 <b>${done}</b></span>
         <span>错题 <b>${Object.keys(ss.wrong||{}).length}</b></span>
       </div>
-      <div class="sys-done">${isCur?'✓ 当前':done?'已开始':'未开始'}</div>`;
+      <div class="sys-go">›</div>`;
     card.onclick = ()=>{ switchSystem(s.key); };
     grid.appendChild(card);
   });
@@ -589,10 +595,10 @@ function showResult(r){
 if(SYSTEMS.length){
   if(!SYSTEMS.find(s=>s.key===state.sysKey)) state.sysKey = SYSTEMS[0].key;
   if(!store[state.sysKey]) store[state.sysKey] = { wrong:{}, fav:{}, done:{}, examCount:0 };
-  renderHome();
-  show('pageHome');
+  renderSystemGrid();
+  show('pageSystem');
 } else {
   $('heroTitle').textContent = '题库未加载';
   $('heroSub').textContent = '请确认数据文件已正确引入';
-  show('pageHome');
+  show('pageSystem');
 }
